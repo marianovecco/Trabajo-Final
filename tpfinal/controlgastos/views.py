@@ -14,15 +14,15 @@ def categoria_list(request):
     if request.method == 'GET':
         categorias = Categoria.objects.all()
         serializer = CategoriaSerializer(categorias, many=True)
-        return JSONResponse(serializer.data)
+        return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
         data = JSONParser().parse(request)
         serializer = CategoriaSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return JSONResponse(serializer.data, status=201)
-        return JSONResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
 
 
 @csrf_exempt
@@ -49,4 +49,4 @@ def categoria_detail(request, pk):
 
     elif request.method == 'DELETE':
         categoria.delete()
-        return HttpResponse(status=204)
+        return HttpResponse(status=410)
