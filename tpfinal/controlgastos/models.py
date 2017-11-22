@@ -1,5 +1,7 @@
 from django.db import models
 
+
+'''
 class Cuenta(models.Model):
     #El tp no especificaba los campos, deduje que tenia que tener varios usuarios
     users = models.ForeignKey(Usuario, on_delete=models.CASCADE) #Verificar relaciones y si hay que usar cascadeo
@@ -17,8 +19,11 @@ class Movimiento(models.Model):
     monto = models.IntegerField(default=0)
     categoria = models.ForeignKey(Categoria)
     descripcion = models.CharField(max=500)
+'''
 
 class Categoria(models.Model):
-    nombre = models.CharField(max=200)
+    nombre = models.CharField(max_length=200)
 
-#Todavia no hice las migraciones hasta verificar bien las cosas que estan marcadas    
+#Todavia no hice las migraciones hasta verificar bien las cosas que estan marcadas
+
+#INSTALLED APPS
