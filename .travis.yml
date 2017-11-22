@@ -6,7 +6,7 @@ env:
   - DJANGO_VERSION=1.11
   
 before_install:
-  - export PYTHONPATH=$HOME/builds/marianovecco/Trabajo-Final
+  - export PYTHONPATH=$HOME/builds/marianovecco/Trabajo-Final/tpfinal
 
 install:
   - pip install -q Django==$DJANGO_VERSION
