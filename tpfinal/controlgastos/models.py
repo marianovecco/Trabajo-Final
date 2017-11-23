@@ -1,17 +1,17 @@
 from django.db import models
 
 
-'''
 class Cuenta(models.Model):
-    #El tp no especificaba los campos, deduje que tenia que tener varios usuarios
-    users = models.ForeignKey(Usuario, on_delete=models.CASCADE) #Verificar relaciones y si hay que usar cascadeo
+    nombre = models.CharField(max_length=200)
+
 
 class Usuario(models.Model):
-    user = models.CharField(max=200)
-    password = models.CharField(max=200)
-    email = models.CharField(max=200)
+    user = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
     cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE) #Verificar relaciones y si hay que usar cascadeo
 
+'''
 class Movimiento(models.Model):
     #Verificar relaciones con Usuario y Categoria
     fecha = models.DateTimeField('fecha')
@@ -23,6 +23,8 @@ class Movimiento(models.Model):
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=200)
+    cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, default="")
+
 
 #Todavia no hice las migraciones hasta verificar bien las cosas que estan marcadas
 
