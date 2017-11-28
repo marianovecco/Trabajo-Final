@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import Categoria, Cuenta
-from .serializers import CategoriaSerializer
+from controlgastos.models import Categoria, Cuenta
+from controlgastos.serializers import CategoriaSerializer
 from rest_framework.renderers import JSONRenderer
 
 class CategoriaTests(APITestCase):
@@ -34,7 +34,7 @@ class CategoriaTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_borrarr_categoria(self):
+    def test_borrar_categoria(self):
         """
         Test de borrado de una sola categoria
         """
