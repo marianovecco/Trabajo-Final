@@ -42,4 +42,4 @@ class CategoriaTests(APITestCase):
         self.client.post('/controlgastos/categorias/', {'nombre': 'Compras','cuenta':'1'}, format='json')
         url = '/controlgastos/categorias/1/'
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_410_GONE)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

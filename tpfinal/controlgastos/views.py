@@ -3,10 +3,12 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.decorators import api_view
 from controlgastos.models import Categoria, Cuenta, Usuario
 from controlgastos.serializers import CategoriaSerializer, CuentaSerializer, UsuarioSerializer
 
 @csrf_exempt
+@api_view(['GET', 'POST'])
 def categoria_list(request):
     """
     Lista o crea las categorias
@@ -26,6 +28,7 @@ def categoria_list(request):
 
 
 @csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
 def categoria_detail(request, pk):
     """
     Hacer retrieve, update o delete de una categoria.
@@ -49,9 +52,10 @@ def categoria_detail(request, pk):
 
     elif request.method == 'DELETE':
         categoria.delete()
-        return HttpResponse(status=410)
+        return HttpResponse(status=204)
 
 @csrf_exempt
+@api_view(['GET', 'POST'])
 def cuenta_list(request):
     """
     Lista o crea las cuentas
@@ -71,6 +75,7 @@ def cuenta_list(request):
 
 
 @csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
 def cuenta_detail(request, pk):
     """
     Hacer retrieve, update o delete de una cuenta.
@@ -94,9 +99,10 @@ def cuenta_detail(request, pk):
 
     elif request.method == 'DELETE':
         cuenta.delete()
-        return HttpResponse(status=410)
+        return HttpResponse(status=204)
 
 @csrf_exempt
+@api_view(['GET', 'POST'])
 def usuario_list(request):
     """
     Lista o crea los usuarios
@@ -116,6 +122,7 @@ def usuario_list(request):
 
 
 @csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
 def usuario_detail(request, pk):
     """
     Hacer retrieve, update o delete de un usuario
@@ -139,7 +146,7 @@ def usuario_detail(request, pk):
 
     elif request.method == 'DELETE':
         usuario.delete()
-        return HttpResponse(status=410)
+        return HttpResponse(status=204)
 
 def usuarios_cuenta(request,pk):
     """
@@ -167,4 +174,4 @@ def categorias_cuenta(request,pk):
     if request.method == 'GET':
         categorias = Categoria.objects.filter(cuenta=cuenta.id)
         serializer = CategoriaSerializer(categorias, many=True)
-        return JsonResponse(serializer.data, safe=False)    
+        return JsonResponse(serializer.data, safe=False)
