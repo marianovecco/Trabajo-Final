@@ -15,3 +15,6 @@ install:
 script:
   - cd tpfinal
   - python manage.py test controlgastos
+
+after_success:
+  - coveralls
