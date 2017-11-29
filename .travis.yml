@@ -11,11 +11,12 @@ before_install:
 install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install djangorestframework
-  - pip install python-coveralls
+  - pip install coveralls
 
 script:
   - cd tpfinal
   - python manage.py test controlgastos
+  - coverage run --source=home manage.py test controlgastos
 
 after_success:
   - coveralls
