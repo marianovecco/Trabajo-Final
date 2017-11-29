@@ -11,7 +11,7 @@ class CategoriaTests(APITestCase):
         """
         Test de listado de caterogias
         """
-        url = '/controlgastos/categorias/'
+        url = '/controlgastos/categorias'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -19,8 +19,8 @@ class CategoriaTests(APITestCase):
         """
         Test de creacion de una categoria
         """
-        self.client.post('/controlgastos/cuentas/', {'nombre': 'cuenta1'}, format='json')
-        url = '/controlgastos/categorias/'
+        self.client.post('/controlgastos/cuentas', {'nombre': 'cuenta1'}, format='json')
+        url = '/controlgastos/categorias'
         response = self.client.post(url, {'nombre': 'Compras','cuenta':'1'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -28,9 +28,9 @@ class CategoriaTests(APITestCase):
         """
         Test de obtencion de una sola categoria
         """
-        self.client.post('/controlgastos/cuentas/', {'nombre': 'cuenta1'}, format='json')
-        self.client.post('/controlgastos/categorias/', {'nombre': 'Compras','cuenta':'1'}, format='json')
-        url = '/controlgastos/categorias/1/'
+        self.client.post('/controlgastos/cuentas', {'nombre': 'cuenta1'}, format='json')
+        self.client.post('/controlgastos/categorias', {'nombre': 'Compras','cuenta':'1'}, format='json')
+        url = '/controlgastos/categorias/1'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -38,8 +38,8 @@ class CategoriaTests(APITestCase):
         """
         Test de borrado de una sola categoria
         """
-        self.client.post('/controlgastos/cuentas/', {'nombre': 'cuenta1'}, format='json')
-        self.client.post('/controlgastos/categorias/', {'nombre': 'Compras','cuenta':'1'}, format='json')
-        url = '/controlgastos/categorias/1/'
+        self.client.post('/controlgastos/cuentas', {'nombre': 'cuenta1'}, format='json')
+        self.client.post('/controlgastos/categorias', {'nombre': 'Compras','cuenta':'1'}, format='json')
+        url = '/controlgastos/categorias/1'
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
