@@ -4,8 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
-from controlgastos.models import Categoria, Cuenta, Usuario
-from controlgastos.serializers import CategoriaSerializer, CuentaSerializer, UsuarioSerializer
+from controlgastos.models import Categoria, Cuenta, Usuario, Movimiento
+from controlgastos.serializers import CategoriaSerializer, CuentaSerializer, UsuarioSerializer, MovimientoSerializer
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
@@ -28,7 +28,7 @@ def categoria_list(request):
 
 
 @csrf_exempt
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT','PATCH','DELETE'])
 def categoria_detail(request, pk):
     """
     Hacer retrieve, update o delete de una categoria.
@@ -45,6 +45,14 @@ def categoria_detail(request, pk):
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
         serializer = CategoriaSerializer(categoria, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        data = JSONParser().parse(request)
+        serializer = CategoriaSerializer(categoria,data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -75,7 +83,7 @@ def cuenta_list(request):
 
 
 @csrf_exempt
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT','PATCH','DELETE'])
 def cuenta_detail(request, pk):
     """
     Hacer retrieve, update o delete de una cuenta.
@@ -92,6 +100,14 @@ def cuenta_detail(request, pk):
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
         serializer = CuentaSerializer(cuenta, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        data = JSONParser().parse(request)
+        serializer = CuentaSerializer(cuenta,data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -122,7 +138,7 @@ def usuario_list(request):
 
 
 @csrf_exempt
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT','PATCH','DELETE'])
 def usuario_detail(request, pk):
     """
     Hacer retrieve, update o delete de un usuario
@@ -139,6 +155,14 @@ def usuario_detail(request, pk):
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
         serializer = UsuarioSerializer(usuario, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        data = JSONParser().parse(request)
+        serializer = UsuarioSerializer(usuario,data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -175,3 +199,58 @@ def categorias_cuenta(request,pk):
         categorias = Categoria.objects.filter(cuenta=cuenta.id)
         serializer = CategoriaSerializer(categorias, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def movimientos_list(request):
+    """
+    Lista o crea los usuarios
+    """
+    if request.method == 'GET':
+        movimientos = Movimiento.objects.all()
+        serializer = MovimientoSerializer(movimientos, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = MovimientoSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+@api_view(['GET', 'PUT','PATCH','DELETE'])
+def movimientos_detail(request, pk):
+    """
+    Hacer retrieve, update o delete de un usuario
+    """
+    try:
+        movimiento = Movimiento.objects.get(pk=pk)
+    except Movimiento.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = MovimientoSerializer(movimiento)
+        return JsonResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = MovimientoSerializer(movimiento, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        data = JSONParser().parse(request)
+        serializer = MovimientoSerializer(movimiento,data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        movimiento.delete()
+        return HttpResponse(status=204)

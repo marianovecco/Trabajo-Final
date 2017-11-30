@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^usuarios/(?P<pk>[0-9]+)$', views.usuario_detail),
     url(r'^cuentas/(?P<pk>[0-9]+)/usuarios$', views.usuarios_cuenta),
     url(r'^cuentas/(?P<pk>[0-9]+)/categorias$', views.categorias_cuenta),
+    url(r'^movimientos$', views.movimientos_list),
+    url(r'^movimientos/(?P<pk>[0-9]+)$', views.movimientos_detail),
 ]
