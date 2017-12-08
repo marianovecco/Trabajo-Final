@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 from controlgastos.models import Categoria, Cuenta
 from controlgastos.serializers import CategoriaSerializer
 from rest_framework.renderers import JSONRenderer
+import json
 
 class CategoriaTests(APITestCase):
     def test_listar_categorias(self):
@@ -14,6 +15,8 @@ class CategoriaTests(APITestCase):
         url = '/controlgastos/categorias'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),[]) #Por ahora dejemoslo asi, despues veo si usamos fixtures y hay que cambiarlo
+
 
     def test_crear_categoria(self):
         """
@@ -23,6 +26,7 @@ class CategoriaTests(APITestCase):
         url = '/controlgastos/categorias'
         response = self.client.post(url, {'nombre': 'Compras','cuenta':'1'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Compras', 'cuenta': 1})
 
     def test_obtener_categoria(self):
         """
@@ -33,6 +37,7 @@ class CategoriaTests(APITestCase):
         url = '/controlgastos/categorias/1'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Compras', 'cuenta': 1})
 
     def test_borrar_categoria(self):
         """
@@ -43,6 +48,24 @@ class CategoriaTests(APITestCase):
         url = '/controlgastos/categorias/1'
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_bad_request(self):
+        """
+        Testea cuando un request no se hace correctamente, en este caso no se le pasan parametros al post
+        """
+        url = '/controlgastos/categorias'
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_not_found(self):
+        """
+        Testea cuando se pide una categoria que no existe
+        """
+        self.client.post('/controlgastos/cuentas', {'nombre': 'cuenta1'}, format='json')
+        self.client.post('/controlgastos/categorias', {'nombre': 'Compras','cuenta':'1'}, format='json')
+        url = '/controlgastos/categorias/20'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 class UsuarioTests(APITestCase):
     def test_listar_usuarios(self):
@@ -117,5 +140,3 @@ class CuentaTests(APITestCase):
         url = '/controlgastos/cuentas/1'
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        

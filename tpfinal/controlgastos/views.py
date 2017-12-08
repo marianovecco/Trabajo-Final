@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from controlgastos.models import Categoria, Cuenta, Usuario, Movimiento
 from controlgastos.serializers import CategoriaSerializer, CuentaSerializer, UsuarioSerializer, MovimientoSerializer
+from rest_framework import generics
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
@@ -200,57 +201,13 @@ def categorias_cuenta(request,pk):
         serializer = CategoriaSerializer(categorias, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-@csrf_exempt
-@api_view(['GET', 'POST'])
-def movimientos_list(request):
-    """
-    Lista o crea los usuarios
-    """
-    if request.method == 'GET':
-        movimientos = Movimiento.objects.all()
-        serializer = MovimientoSerializer(movimientos, many=True)
-        return JsonResponse(serializer.data, safe=False)
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = MovimientoSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+#Recurso Movimiento utilizando class based views
+class MovimientoList(generics.ListCreateAPIView):
+    queryset = Movimiento.objects.all()
+    serializer_class = MovimientoSerializer
 
 
-@csrf_exempt
-@api_view(['GET', 'PUT','PATCH','DELETE'])
-def movimientos_detail(request, pk):
-    """
-    Hacer retrieve, update o delete de un usuario
-    """
-    try:
-        movimiento = Movimiento.objects.get(pk=pk)
-    except Movimiento.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = MovimientoSerializer(movimiento)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = MovimientoSerializer(movimiento, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'PATCH':
-        data = JSONParser().parse(request)
-        serializer = MovimientoSerializer(movimiento,data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        movimiento.delete()
-        return HttpResponse(status=204)
+class MovimientoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Movimiento.objects.all()
+    serializer_class = MovimientoSerializer
