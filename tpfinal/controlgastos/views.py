@@ -12,7 +12,7 @@ from rest_framework import generics
 @api_view(['GET', 'POST'])
 def categoria_list(request):
     """
-    Lista o crea las categorias
+    Listado y creacion de las categorias
     """
     if request.method == 'GET':
         categorias = Categoria.objects.all()
@@ -32,7 +32,7 @@ def categoria_list(request):
 @api_view(['GET', 'PUT','PATCH','DELETE'])
 def categoria_detail(request, pk):
     """
-    Hacer retrieve, update o delete de una categoria.
+    Obtencion, modificacion y eliminacion de una categoria
     """
     try:
         categoria = Categoria.objects.get(pk=pk)
@@ -67,7 +67,7 @@ def categoria_detail(request, pk):
 @api_view(['GET', 'POST'])
 def cuenta_list(request):
     """
-    Lista o crea las cuentas
+    Listado y creacion de las cuentas
     """
     if request.method == 'GET':
         cuentas = Cuenta.objects.all()
@@ -87,7 +87,7 @@ def cuenta_list(request):
 @api_view(['GET', 'PUT','PATCH','DELETE'])
 def cuenta_detail(request, pk):
     """
-    Hacer retrieve, update o delete de una cuenta.
+    Obtencion, modificacion y eliminacion de una cuenta
     """
     try:
         cuenta = Cuenta.objects.get(pk=pk)
@@ -122,7 +122,7 @@ def cuenta_detail(request, pk):
 @api_view(['GET', 'POST'])
 def usuario_list(request):
     """
-    Lista o crea los usuarios
+    Listado y creacion de los usuarios
     """
     if request.method == 'GET':
         usuarios = Usuario.objects.all()
@@ -142,7 +142,7 @@ def usuario_list(request):
 @api_view(['GET', 'PUT','PATCH','DELETE'])
 def usuario_detail(request, pk):
     """
-    Hacer retrieve, update o delete de un usuario
+    Obtencion, modificacion y eliminacion de un usuario
     """
     try:
         usuario = Usuario.objects.get(pk=pk)
@@ -173,9 +173,10 @@ def usuario_detail(request, pk):
         usuario.delete()
         return HttpResponse(status=204)
 
+@api_view(['GET'])
 def usuarios_cuenta(request,pk):
     """
-    Lista o crea los usuarios
+    Lista los usuarios de una cuenta
     """
     try:
         cuenta = Cuenta.objects.get(pk=pk)
@@ -187,9 +188,10 @@ def usuarios_cuenta(request,pk):
         serializer = UsuarioSerializer(usuarios, many=True)
         return JsonResponse(serializer.data, safe=False)
 
+@api_view(['GET'])
 def categorias_cuenta(request,pk):
     """
-    Lista o crea los usuarios
+    Lista las categorias de una cuenta
     """
     try:
         cuenta = Cuenta.objects.get(pk=pk)
@@ -204,10 +206,16 @@ def categorias_cuenta(request,pk):
 
 #Recurso Movimiento utilizando class based views
 class MovimientoList(generics.ListCreateAPIView):
+    """
+    Listado y creacion de movimientos
+    """
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
 
 
 class MovimientoDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Obtencion, modificacion y eliminacion de un movimiento
+    """
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
