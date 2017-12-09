@@ -12,6 +12,7 @@ install:
   - pip install -q Django==$DJANGO_VERSION
   - pip install djangorestframework
   - pip install coveralls
+  - pip install drfdocs
 
 script:
   - cd tpfinal
