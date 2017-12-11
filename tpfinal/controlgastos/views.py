@@ -7,171 +7,83 @@ from rest_framework.decorators import api_view
 from controlgastos.models import Categoria, Cuenta, Usuario, Movimiento
 from controlgastos.serializers import CategoriaSerializer, CuentaSerializer, UsuarioSerializer, MovimientoSerializer
 from rest_framework import generics
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-@csrf_exempt
-@api_view(['GET', 'POST'])
-def categoria_list(request):
+#Recurso Cuenta utilizando class based views
+class CuentaList(generics.ListCreateAPIView):
     """
-    Listado y creacion de las categorias
+    Listado y creacion de cuenta
     """
-    if request.method == 'GET':
-        categorias = Categoria.objects.all()
-        serializer = CategoriaSerializer(categorias, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = CategoriaSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+    queryset = Cuenta.objects.all()
+    serializer_class = CuentaSerializer
 
 
-@csrf_exempt
-@api_view(['GET', 'PUT','PATCH','DELETE'])
-def categoria_detail(request, pk):
-    """
-    Obtencion, modificacion y eliminacion de una categoria
-    """
-    try:
-        categoria = Categoria.objects.get(pk=pk)
-    except Categoria.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = CategoriaSerializer(categoria)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = CategoriaSerializer(categoria, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'PATCH':
-        data = JSONParser().parse(request)
-        serializer = CategoriaSerializer(categoria,data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        categoria.delete()
-        return HttpResponse(status=204)
-
-@csrf_exempt
-@api_view(['GET', 'POST'])
-def cuenta_list(request):
-    """
-    Listado y creacion de las cuentas
-    """
-    if request.method == 'GET':
-        cuentas = Cuenta.objects.all()
-        serializer = CuentaSerializer(cuentas, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = CuentaSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-
-
-@csrf_exempt
-@api_view(['GET', 'PUT','PATCH','DELETE'])
-def cuenta_detail(request, pk):
+class CuentaDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Obtencion, modificacion y eliminacion de una cuenta
     """
-    try:
-        cuenta = Cuenta.objects.get(pk=pk)
-    except Cuenta.DoesNotExist:
-        return HttpResponse(status=404)
+    queryset = Cuenta.objects.all()
+    serializer_class = CuentaSerializer
 
-    if request.method == 'GET':
-        serializer = CuentaSerializer(cuenta)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = CuentaSerializer(cuenta, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'PATCH':
-        data = JSONParser().parse(request)
-        serializer = CuentaSerializer(cuenta,data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        cuenta.delete()
-        return HttpResponse(status=204)
-
-@csrf_exempt
-@api_view(['GET', 'POST'])
-def usuario_list(request):
+#Recurso Usuario utilizando class based views
+class UsuarioList(generics.ListCreateAPIView):
     """
-    Listado y creacion de los usuarios
+    Listado y creacion de usuarios
     """
-    if request.method == 'GET':
-        usuarios = Usuario.objects.all()
-        serializer = UsuarioSerializer(usuarios, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = UsuarioSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
 
 
-@csrf_exempt
-@api_view(['GET', 'PUT','PATCH','DELETE'])
-def usuario_detail(request, pk):
+class UsuarioDetail(APIView):
     """
     Obtencion, modificacion y eliminacion de un usuario
     """
-    try:
-        usuario = Usuario.objects.get(pk=pk)
-    except Usuario.DoesNotExist:
-        return HttpResponse(status=404)
+    def get_object(self, pk):
+        try:
+            return Usuario.objects.get(pk=pk)
+        except Usuario.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        usuario = self.get_object(pk)
         serializer = UsuarioSerializer(usuario)
-        return JsonResponse(serializer.data)
+        return Response(serializer.data)
 
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = UsuarioSerializer(usuario, data=data)
+    def put(self, request, pk, format=None):
+        usuario = self.get_object(pk)
+        serializer = UsuarioSerializer(usuario, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'PATCH':
-        data = JSONParser().parse(request)
-        serializer = UsuarioSerializer(usuario,data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+    def delete(self, request, pk, format=None):
+        usuario = self.get_object(pk)
+        if Movimiento.objects.filter(usuario=usuario):
+            usuario.delete()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            usuario.hard_delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-    elif request.method == 'DELETE':
-        usuario.delete()
-        return HttpResponse(status=204)
+#Recurso Categoria utilizando class based views
+class CategoriaList(generics.ListCreateAPIView):
+    """
+    Listado y creacion de cateogorias
+    """
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+
+class CategoriaDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Obtencion, modificacion y eliminacion de una categoria
+    """
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
 
 @api_view(['GET'])
 def usuarios_cuenta(request,pk):
@@ -180,7 +92,7 @@ def usuarios_cuenta(request,pk):
     """
     try:
         cuenta = Cuenta.objects.get(pk=pk)
-    except Usuario.DoesNotExist:
+    except Cuenta.DoesNotExist:
         return HttpResponse(status=404)
 
     if request.method == 'GET':
@@ -195,14 +107,13 @@ def categorias_cuenta(request,pk):
     """
     try:
         cuenta = Cuenta.objects.get(pk=pk)
-    except Usuario.DoesNotExist:
+    except Cuenta.DoesNotExist:
         return HttpResponse(status=404)
 
     if request.method == 'GET':
         categorias = Categoria.objects.filter(cuenta=cuenta.id)
         serializer = CategoriaSerializer(categorias, many=True)
         return JsonResponse(serializer.data, safe=False)
-
 
 #Recurso Movimiento utilizando class based views
 class MovimientoList(generics.ListCreateAPIView):
@@ -219,3 +130,33 @@ class MovimientoDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
+
+@api_view(['GET'])
+def movimientos_usuario(request,pk):
+    """
+    Lista los movimientos de un usuario
+    """
+    try:
+        usuario = Usuario.objects.get(pk=pk)
+    except Usuario.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        movimientos = Movimiento.objects.filter(usuario=usuario.id)
+        serializer = MovimientoSerializer(movimientos, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+@api_view(['GET'])
+def movimientos_categoria(request,pk):
+    """
+    Lista los movimientos de una categoria
+    """
+    try:
+        categoria = Categoria.objects.get(pk=pk)
+    except Categoria.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        movimientos = Movimiento.objects.filter(categoria=categoria.id)
+        serializer = MovimientoSerializer(movimientos, many=True)
+        return JsonResponse(serializer.data, safe=False)
