@@ -36,6 +36,25 @@ class CategoriaTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Compras', 'cuenta': 1})
 
+    def test_put_categoria(self):
+        """
+        Test de modificacion de una sola categoria con el metodo put
+        """
+        url = '/controlgastos/categorias/1'
+        response = self.client.put(url, {'nombre': 'Perro','cuenta':'1'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Perro', 'cuenta': 1})
+
+    def test_patch_categoria(self):
+        """
+        Test de modificacion de una sola categoria con el metodo patch
+        """
+        url = '/controlgastos/categorias/1'
+        response = self.client.put(url, {'nombre': 'Gato'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Gato', 'cuenta': 1})
+
+
     def test_borrar_categoria(self):
         """
         Test de borrado de una sola categoria
@@ -123,6 +142,24 @@ class UsuarioTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),[{'id': 1, 'fecha': '2017-07-12','usuario':1,'monto':2000,'categoria':1,'descripcion':'pepe'}])
 
+    def test_put_usuario(self):
+        """
+        Test de modificacion de un usuario con el metodo put
+        """
+        url = '/controlgastos/usuarios/1'
+        response = self.client.put(url, {'user': 'user1','password': 'contraseña','email':'user1@gmail.com','cuenta':'1'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'user': 'user1','password': 'contraseña','email':'user1@gmail.com', 'cuenta': 1})
+
+    def test_patch_usuario(self):
+        """
+        Test de modificacion de un usuario con el metodo patch
+        """
+        url = '/controlgastos/usuarios/1'
+        response = self.client.patch(url, {'user': 'Mariano'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, "user": "Mariano", "password": "1234", "email": "hola@123.com", "cuenta": 1})
+
     def test_bad_request(self):
         """
         Testea cuando un request no se hace correctamente, en este caso no se le pasan parametros al post
@@ -194,6 +231,23 @@ class CuentaTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),[{'id': 1, 'user': 'Pepito','password': '1234','email':'hola@123.com', 'cuenta': 1},{'id': 2, 'user': 'Pepon','password': '123478','email':'pepon@123.com', 'cuenta': 1}])
 
+    def test_put_cuenta(self):
+        """
+        Test de modificacion de una cuenta con el metodo put
+        """
+        url = '/controlgastos/cuentas/1'
+        response = self.client.put(url,  {'nombre': 'Cuenta2'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Cuenta2'})
+
+    def test_patch_cuenta(self):
+        """
+        Test de modificacion de una cuenta con el metodo patch
+        """
+        url = '/controlgastos/cuentas/1'
+        response = self.client.patch(url, {'nombre': 'Cuenta3'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Cuenta3'})
 
     def test_bad_request(self):
         """
@@ -211,9 +265,6 @@ class CuentaTests(APITestCase):
         url = '/controlgastos/cuentas/20'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-
-
 
 class MovimientoTests(APITestCase):
     fixtures = ['db.json']
@@ -251,6 +302,24 @@ class MovimientoTests(APITestCase):
         url = '/controlgastos/movimientos/1'
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_put_movimiento(self):
+        """
+        Test de modificacion de un movimiento con el metodo put
+        """
+        url = '/controlgastos/movimientos/1'
+        response = self.client.put(url,   {'fecha':'2017-07-12','usuario':'1','monto':'3500','categoria':'1','descripcion':'pepito'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id':1, 'fecha':'2017-07-12','usuario':1,'monto':3500,'categoria':1,'descripcion':'pepito'})
+
+    def test_patch_movimiento(self):
+        """
+        Test de modificacion de un movimiento con el metodo patch
+        """
+        url = '/controlgastos/movimientos/1'
+        response = self.client.patch(url, {'monto': '5600'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'fecha': '2017-07-12','usuario':1,'monto':5600,'categoria':1,'descripcion':'pepe'})
 
     def test_bad_request(self):
         """
