@@ -36,8 +36,8 @@ Deberá contar con los siguientes paquetes instalados:
 * Django 1.11  `pip3 install Django`
     
 * Django Rest Framework 3.7.3  `pip3 install djangorestframework`
-
-*DRF Docs (para acceder a la [documentación](#documentación)) `pip3 install drfdocs`
+ 
+* DRF Docs (para acceder a la [documentación](#documentación)) `pip3 install drfdocs`
     
 ### Pasos para la instalación
 A continuación se detallan los pasos para la instalación:
