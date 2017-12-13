@@ -59,7 +59,7 @@ Y luego, con el servidor corriendo, es decir usando el comando:
 
 Acceder desde el navegador a la url http://localhost:8000/docs (en caso de no usar el servidor o el puerto por defecto es necesario modificarlo).
 
-Dentro podran encontrar las URIs con sus respectivos metodos, descripcion de su funcion y descripcion de los campos de los recursos utilizados. Ademas, haciendo click en el icono con la llave se podran realizar requests de prueba y ver su correspondiente response.
+Dentro podran encontrar las URIs con sus respectivos metodos, descripcion de su funcion y descripcion de los campos de los recursos utilizados. Ademas, haciendo click en el icono en el extremo derecho de cada URI se podran realizar requests de prueba y ver su correspondiente response.
 
 ---
 
