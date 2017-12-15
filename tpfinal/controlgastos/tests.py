@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from controlgastos.models import Categoria, Cuenta
-from controlgastos.serializers import CategoriaSerializer
+from controlgastos.models import Categoria, Cuenta, Usuario, Movimiento
+from controlgastos.serializers import CategoriaSerializer, CuentaSerializer, UsuarioSerializer, MovimientoSerializer
 from rest_framework.renderers import JSONRenderer
 import json
 
@@ -16,7 +16,11 @@ class CategoriaTests(APITestCase):
         url = '/controlgastos/categorias'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        categorias = Categoria.objects.all()
+        serializer = CategoriaSerializer(categorias, many=True)
+        content = JSONRenderer().render(serializer.data)
         self.assertEqual(json.loads(response.content),[{'id': 1, 'nombre': 'Compras', 'cuenta': 1}])
+        self.assertEqual(json.loads(content),[{'id': 1, 'nombre': 'Compras', 'cuenta': 1}])
 
     def test_crear_categoria(self):
         """
@@ -26,6 +30,10 @@ class CategoriaTests(APITestCase):
         response = self.client.post(url, {'nombre': 'Supermercado','cuenta':'1'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(json.loads(response.content),{'id': 2, 'nombre': 'Supermercado', 'cuenta': 1})
+        categoria = Categoria.objects.get(id='2')
+        serializer = CategoriaSerializer(categoria)
+        content = JSONRenderer().render(serializer.data)
+        self.assertEqual(json.loads(content),{'id': 2, 'nombre': 'Supermercado', 'cuenta': 1})
 
     def test_obtener_categoria(self):
         """
@@ -35,6 +43,10 @@ class CategoriaTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Compras', 'cuenta': 1})
+        categoria = Categoria.objects.get(id='1')
+        serializer = CategoriaSerializer(categoria)
+        content = JSONRenderer().render(serializer.data)
+        self.assertEqual(json.loads(content),{'id': 1, 'nombre': 'Compras', 'cuenta': 1})
 
     def test_put_categoria(self):
         """
@@ -44,6 +56,10 @@ class CategoriaTests(APITestCase):
         response = self.client.put(url, {'nombre': 'Perro','cuenta':'1'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Perro', 'cuenta': 1})
+        categoria = Categoria.objects.get(id='1')
+        serializer = CategoriaSerializer(categoria)
+        content = JSONRenderer().render(serializer.data)
+        self.assertEqual(json.loads(content),{'id': 1, 'nombre': 'Perro', 'cuenta': 1})
 
     def test_patch_categoria(self):
         """
@@ -53,7 +69,10 @@ class CategoriaTests(APITestCase):
         response = self.client.put(url, {'nombre': 'Gato'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),{'id': 1, 'nombre': 'Gato', 'cuenta': 1})
-
+        categoria = Categoria.objects.get(id='1')
+        serializer = CategoriaSerializer(categoria)
+        content = JSONRenderer().render(serializer.data)
+        self.assertEqual(json.loads(content),{'id': 1, 'nombre': 'Gato', 'cuenta': 1})
 
     def test_borrar_categoria(self):
         """
@@ -62,6 +81,7 @@ class CategoriaTests(APITestCase):
         url = '/controlgastos/categorias/1'
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Categoria.objects.filter(id='1').exists())
 
     def test_obtener_movimientos(self):
         """
@@ -71,6 +91,12 @@ class CategoriaTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),[{'id': 1, 'fecha': '2017-07-12','usuario':1,'monto':2000,'categoria':1,'descripcion':'pepe'}])
+        categoria = Categoria.objects.get(id='1')
+        movimientos = Movimiento.objects.filter(categoria=categoria)
+        serializer = MovimientoSerializer(movimientos, many=True)
+        content = JSONRenderer().render(serializer.data)
+        self.assertEqual(json.loads(content),[{'id': 1, 'fecha': '2017-07-12','usuario':1,'monto':2000,'categoria':1,'descripcion':'pepe'}])
+
 
     def test_bad_request(self):
         """
@@ -117,6 +143,25 @@ class UsuarioTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),{'id': 1, "user": "Pepito", "password": "1234", "email": "hola@123.com", "cuenta": 1})
 
+    def test_put_usuario(self):
+        """
+        Test de modificacion de un usuario con el metodo put
+        """
+        url = '/controlgastos/usuarios/1'
+        response = self.client.put(url, {'user': 'user1','password': 'contraseña','email':'user1@gmail.com','cuenta':'1'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, 'user': 'user1','password': 'contraseña','email':'user1@gmail.com', 'cuenta': 1})
+
+    def test_patch_usuario(self):
+        """
+        Test de modificacion de un usuario con el metodo patch
+        """
+        url = '/controlgastos/usuarios/1'
+        response = self.client.patch(url, {'user': 'Mariano'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content),{'id': 1, "user": "Mariano", "password": "1234", "email": "hola@123.com", "cuenta": 1})
+
+
     def test_borrar_usuario_con(self):
         """
         Test de borrado de un solo usuario con movimientos
@@ -141,24 +186,6 @@ class UsuarioTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content),[{'id': 1, 'fecha': '2017-07-12','usuario':1,'monto':2000,'categoria':1,'descripcion':'pepe'}])
-
-    def test_put_usuario(self):
-        """
-        Test de modificacion de un usuario con el metodo put
-        """
-        url = '/controlgastos/usuarios/1'
-        response = self.client.put(url, {'user': 'user1','password': 'contraseña','email':'user1@gmail.com','cuenta':'1'}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content),{'id': 1, 'user': 'user1','password': 'contraseña','email':'user1@gmail.com', 'cuenta': 1})
-
-    def test_patch_usuario(self):
-        """
-        Test de modificacion de un usuario con el metodo patch
-        """
-        url = '/controlgastos/usuarios/1'
-        response = self.client.patch(url, {'user': 'Mariano'}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content),{'id': 1, "user": "Mariano", "password": "1234", "email": "hola@123.com", "cuenta": 1})
 
     def test_bad_request(self):
         """
