@@ -9,7 +9,7 @@ from django.conf import settings
 def process_response(response):
     soup = BeautifulSoup(str(response.content), 'html.parser')
     soup.prettify()
-    message=""
+    message="Not Found"
 
     if settings.DEBUG:
         message = soup.p.get_text()
