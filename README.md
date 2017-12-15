@@ -38,6 +38,8 @@ Deberá contar con los siguientes paquetes instalados:
 * Django Rest Framework 3.7.3  `pip3 install djangorestframework`
  
 * DRF Docs (para acceder a la [documentación](#documentación)) `pip3 install drfdocs`
+
+* Beautiful Soup `pip install beautifulsoup4`
     
 ### Pasos para la instalación
 A continuación se detallan los pasos para la instalación:
