@@ -9,7 +9,7 @@ from django.conf import settings
 def process_response(response):
     soup = BeautifulSoup(str(response.content), 'html.parser')
     soup.prettify()
-    message="Not found"
+    message=""
 
     if settings.DEBUG:
         message = soup.p.get_text()
@@ -20,7 +20,7 @@ def process_response(response):
             if p == soup.p:
                 message+=" "
             else:
-                message+=p.get_text()
+                message+=soup.p.get_text()
                 message=re.sub(r'\\n',"",str(message))
                 message=re.sub(r'\\',"",str(message))
                 message=re.sub(r' +'," ",str(message))
