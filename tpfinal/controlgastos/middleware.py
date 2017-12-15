@@ -37,11 +37,12 @@ class JsonException:
     def __call__(self, request):
         response = self.get_response(request)
         if response.status_code == 404:
-                status = response.status_code
-                message = process_response(response)
-                content = {'statusCode': status, 'errorMessage': message}
+            status = response.status_code
+            message = process_response(response)
+            content = {'statusCode': status, 'errorMessage': message}
+            return JsonResponse(content, status=status, safe=False)
         if response.status_code == 500:
             status = response.status_code
             content = {'errorMessage': 'Server Error'}
-
-        return JsonResponse(content, status=status, safe=False)
+            return JsonResponse(content, status=status, safe=False)
+        return response
